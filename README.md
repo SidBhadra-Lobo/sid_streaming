@@ -3,4 +3,8 @@
 
 Part1: Bloom Filter
 
-Have branch, bloom_filter.
+* Have branch, bloom_filter.
+
+* Installed nltk and bitarray.
+
+* implemented and tested universal hash function.

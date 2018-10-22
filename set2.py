@@ -24,11 +24,20 @@ def bloom_filter_set():
 # family should be able to hash a word from the data stream to a number in the
 # appropriate range needed.
 
-def uhf(rng):
+def uhf(p,rng):
     """Returns a hash function that can map a word to a number in the range
     0 - rng
     """
-    pass
+    a = np.random.randint(1, p)
+    b = np.random.randint(0, p)
+
+    return lambda x: ((a*x+b)%p)%rng
+
+#testing uhf
+# hf = uhf(1000003, 101)
+# print(type(hf))
+# print(hf(1000))
+# print(hf)
 
 ############### 
 
