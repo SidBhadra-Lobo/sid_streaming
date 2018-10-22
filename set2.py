@@ -24,6 +24,10 @@ def bloom_filter_set():
 # family should be able to hash a word from the data stream to a number in the
 # appropriate range needed.
 
+# import nltk
+# nltk.download('punkt')
+
+
 def uhf(p,rng):
     """Returns a hash function that can map a word to a number in the range
     0 - rng
@@ -48,42 +52,35 @@ size = 2**18   # size of the filter
 p = 1000003
 
 hash_fns = [uhf(p,size), uhf(p,size), uhf(p,size), uhf(p,size), uhf(p,size)]  # place holder for hash functions
-bloom_filter = None
+bloom_filter = size*bitarray('0')
 num_words = 0         # number in data stream
 num_words_in_set = 0  # number in Bloom filter's set
 
 # print(hash_fns)
 
-num_filters = 5
-hT = []
-
-for f in range(num_filters): #initialize hash tables of bit arrays
-    hT.append(size*bitarray('0'))
-# print(hT[0])
-
-# for word in bloom_filter_set():
-#     print(bitarray(list(word)))
+import time
+t0 = time.time()
 
 for word in bloom_filter_set(): # add the word to the filter by hashing etc.
-   # print(word)
-   ascii_word = [ord(c) for c in word]
-   asum = sum(ascii_word)
-   # print(sum(ascii_word))
+   ascii_word_key = sum([ord(c) for c in word])
 
-   for f in range(len(hT)):
-        # hT[f].append(hash_fns[f](bitarray((list(word),size))))
-
-        pos = hash_fns[f](asum)
+   for f in range(len(hash_fns)):
+        pos = hash_fns[f](ascii_word_key)
         # print(pos)
-        del hT[f][pos]
-        hT[f].insert(pos, 1)
-# print(hT[0])
-print(hT)
-#for word in data_stream():  # check for membership in the Bloom filter
-#    pass 
+        del bloom_filter[pos]
+        bloom_filter.insert(pos, 1)
+
+t1 = time.time()
+
+total = t1-t0
+print('time to hash into bloom filter', total, 'seconds')
+print(bloom_filter)
+
+# for word in data_stream():  # check for membership in the Bloom filter
+#    if sum([ord(c) for c in word])
 
 print('Total number of words in stream = %s'%(num_words,))
-print('Total number of words in stream = %s'%(num_words_in_set,))
+print('Total number of words in set = %s'%(num_words_in_set,))
       
 ################### Part 2 ######################
 
