@@ -62,12 +62,13 @@ import time
 t0 = time.time()
 
 for word in bloom_filter_set(): # add the word to the filter by hashing etc.
-   ascii_word_key = sum([ord(c) for c in word])
+
+   ascii_word_key = sum([ord(c) for c in word]) #get ascii sum for word to use as key.
 
    for f in range(len(hash_fns)):
-        pos = hash_fns[f](ascii_word_key)
+        pos = hash_fns[f](ascii_word_key) # get pos to hash to
         # print(pos)
-        del bloom_filter[pos]
+        del bloom_filter[pos] #
         bloom_filter.insert(pos, 1)
 
 t1 = time.time()
