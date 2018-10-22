@@ -45,15 +45,40 @@ def uhf(p,rng):
 
 from bitarray import bitarray
 size = 2**18   # size of the filter
+p = 1000003
 
-hash_fns = [None, None, None, None, None]  # place holder for hash functions
+hash_fns = [uhf(p,size), uhf(p,size), uhf(p,size), uhf(p,size), uhf(p,size)]  # place holder for hash functions
 bloom_filter = None
 num_words = 0         # number in data stream
 num_words_in_set = 0  # number in Bloom filter's set
 
-#for word in bloom_filter_set(): # add the word to the filter by hashing etc.
-#    pass 
+# print(hash_fns)
 
+num_filters = 5
+hT = []
+
+for f in range(num_filters): #initialize hash tables of bit arrays
+    hT.append(size*bitarray('0'))
+# print(hT[0])
+
+# for word in bloom_filter_set():
+#     print(bitarray(list(word)))
+
+for word in bloom_filter_set(): # add the word to the filter by hashing etc.
+   # print(word)
+   ascii_word = [ord(c) for c in word]
+   asum = sum(ascii_word)
+   # print(sum(ascii_word))
+
+   for f in range(len(hT)):
+        # hT[f].append(hash_fns[f](bitarray((list(word),size))))
+
+        pos = hash_fns[f](asum)
+        # print(pos)
+        del hT[f][pos]
+        hT[f].insert(pos, 1)
+# print(hT[0])
+print(hT)
 #for word in data_stream():  # check for membership in the Bloom filter
 #    pass 
 
