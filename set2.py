@@ -76,17 +76,10 @@ from collections import defaultdict
 print('creating bloom filter, takes < 200 seconds on my machine')
 for word in bloom_filter_set(): # add the word to the filter by hashing etc.
 
-   # ascii_word_key = sum([ord(c) for c in word]) #get ascii sum for word to use as key.
-
-   word_key = sum([ord(word[c])*c+1 for c in range(len(word))]) #unique ascii sum based on order of chars in word.
-   # word_key = sum(map(ord, word))
-   # print(word_key)
-
-   # ascii_word_key = binascii.hexlify(b'hello')
-   # print(ascii_word_key)
+   l = len(word)
+   word_key = sum([ord(word[c])*(c+1)*l for c in range(l)]) #unique ascii sum based on order of chars in word.
 
    # word_key = convertToNumber(word)
-
 
    for f in range(len(hash_fns)):
         pos = hash_fns[f](word_key) # get pos to hash to
@@ -98,11 +91,12 @@ t1 = time.time()
 
 total = t1-t0
 print('time to hash into bloom filter', total, 'seconds')
-print(bloom_filter)
+# print(bloom_filter)
 
 t2 = time.time()
 for word in data_stream():  # check for membership in the Bloom filter
     num_words += 1
+    canda_word = 0
     word_key = sum([ord(word[c]) * c + 1 for c in range(len(word))])
     if num_words % 100000 == 0:
         print('at word',num_words,'in data stream')
@@ -112,7 +106,9 @@ for word in data_stream():  # check for membership in the Bloom filter
         # del bloom_filter[pos]
         # bloom_filter.insert(pos, 1)
         if bloom_filter[pos] == 1:
-            num_words_in_set += 1
+            canda_word += 1
+    if canda_word == len(word):
+        num_words_in_set += 1
 
 t3 = time.time()
 total = t3-t2
