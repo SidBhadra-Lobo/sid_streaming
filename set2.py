@@ -24,11 +24,14 @@ def bloom_filter_set():
 # family should be able to hash a word from the data stream to a number in the
 # appropriate range needed.
 
-def uhf(rng):
+def uhf(p,rng):
     """Returns a hash function that can map a word to a number in the range
     0 - rng
     """
-    pass
+    a = np.random.randint(1, p)
+    b = np.random.randint(0, p)
+
+    return lambda x: ((a*x+b)%p)%rng
 
 ############### 
 
@@ -54,21 +57,50 @@ print('Total number of words in stream = %s'%(num_words_in_set,))
 ################### Part 2 ######################
 
 hash_range = 24 # number of bits in the range of the hash functions
-fm_hash_functions = [None]*35  # Create the appropriate hashes here
-
+p = 1000003
+size = 2**24
+# bit_vector = size*bitarray('0')
+fm_hash_functions = []  # Create the appropriate hashes here
+for i in range(35):
+    fm_hash_functions.append(uhf(p,size))
+# print(fm_hash_functions)
 def num_trailing_bits(n):
     """Returns the number of trailing zeros in bin(n)
 
     n: integer
     """
-    pass
+    binary = "{0:b}".format(n)
+    return len(binary) - len(binary.rstrip('0'))
 
 num_distinct = 0
+wordcount = 2059856
+g1 = g2 = g3 = g4 = g5 = 0
+counter = 0
 
-#for word in data_stream(): # Implement the Flajolet-Martin algorithm
-#    pass
-
-print("Estimate of number of distinct elements = %s"%(num_distinct,))
+# t4 = time.time()
+for word in data_stream(): # Implement the Flajolet-Martin algorithm
+    counter += 1
+    ests = []
+    l = len(word)
+    word_key = sum([ord(word[c]) * (c + 1) * l for c in range(l)])  # unique ascii sum based on order of chars in word.
+    if counter % 100000 == 0:
+        print('at word',counter,'in data stream')
+    for f in range(len(fm_hash_functions)):
+        pos = fm_hash_functions[f](word_key)
+        est = 2**num_trailing_bits(pos)
+        # print(num_distinct)
+        ests.append(est)
+    # print(ests)
+    g1 += sum(ests[:7])
+    g2 += sum(ests[:14])
+    g3 += sum(ests[:21])
+    g4 += sum(ests[:28])
+    g5 += sum(ests[:35])
+group_estimates = [g1/wordcount,g2/wordcount,g3/wordcount,g4/wordcount,g5/wordcount]
+import statistics as st
+median = .median(group_estimates)
+print("Averages:", group_estimates)
+print("Estimate of number of distinct elements = %s"%(round(median),))
 
 ################### Part 3 ######################
 
