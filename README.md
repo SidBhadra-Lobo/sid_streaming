@@ -1,8 +1,7 @@
 # sid_streaming
 3 parts: 1) Bloom Filter, 2)Flajolet-Martin algorithm, 3)AMS algorithm
 
-<<<<<<< HEAD
-Part1: Bloom Filter
+####Part1: Bloom Filter
 
 * Have branch, bloom_filter.
 
@@ -23,8 +22,8 @@ Number of words in Proper.txt: 32657
 Number of false positives: 33693
 
 False positive rate: 33693/66350 = 0.508
-=======
-Part2: Flajolet-Martin Algorithm
+
+####Part2: Flajolet-Martin Algorithm
 
 * completed
->>>>>>> FM_algo
+
