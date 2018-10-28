@@ -8,3 +8,9 @@ Part1: Bloom Filter
 * Installed nltk and bitarray.
 
 * implemented and tested universal hash function.
+
+* Bloom filter made and timed
+   * Takes < 200 seconds
+
+* Data stream checked against filter and timed.
+    * Takes ~ 30 seconds

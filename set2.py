@@ -28,6 +28,9 @@ def bloom_filter_set():
 # nltk.download('punkt')
 
 
+#compare actual second moment vs estimated set moment.
+
+
 def uhf(p,rng):
     """Returns a hash function that can map a word to a number in the range
     0 - rng
@@ -48,6 +51,11 @@ def uhf(p,rng):
 ################### Part 1 ######################
 
 from bitarray import bitarray
+
+import time
+import math
+
+
 size = 2**18   # size of the filter
 p = 1000003
 
@@ -58,17 +66,32 @@ num_words_in_set = 0  # number in Bloom filter's set
 
 # print(hash_fns)
 
-import time
 t0 = time.time()
 
+
+# def convertToNumber(s):
+#     return int.from_bytes(s.encode(), 'little')
+
+from collections import defaultdict
+print('creating bloom filter, takes < 200 seconds on my machine')
 for word in bloom_filter_set(): # add the word to the filter by hashing etc.
 
-   ascii_word_key = sum([ord(c) for c in word]) #get ascii sum for word to use as key.
+   # ascii_word_key = sum([ord(c) for c in word]) #get ascii sum for word to use as key.
+
+   word_key = sum([ord(word[c])*c+1 for c in range(len(word))]) #unique ascii sum based on order of chars in word.
+   # word_key = sum(map(ord, word))
+   # print(word_key)
+
+   # ascii_word_key = binascii.hexlify(b'hello')
+   # print(ascii_word_key)
+
+   # word_key = convertToNumber(word)
+
 
    for f in range(len(hash_fns)):
-        pos = hash_fns[f](ascii_word_key) # get pos to hash to
+        pos = hash_fns[f](word_key) # get pos to hash to
         # print(pos)
-        del bloom_filter[pos] #
+        del bloom_filter[pos]
         bloom_filter.insert(pos, 1)
 
 t1 = time.time()
@@ -77,8 +100,24 @@ total = t1-t0
 print('time to hash into bloom filter', total, 'seconds')
 print(bloom_filter)
 
-# for word in data_stream():  # check for membership in the Bloom filter
-#    if sum([ord(c) for c in word])
+t2 = time.time()
+for word in data_stream():  # check for membership in the Bloom filter
+    num_words += 1
+    word_key = sum([ord(word[c]) * c + 1 for c in range(len(word))])
+    if num_words % 100000 == 0:
+        print('at word',num_words,'in data stream')
+    for f in range(len(hash_fns)):
+        pos = hash_fns[f](word_key)  # get pos to hash to
+        # print(pos)
+        # del bloom_filter[pos]
+        # bloom_filter.insert(pos, 1)
+        if bloom_filter[pos] == 1:
+            num_words_in_set += 1
+
+t3 = time.time()
+total = t3-t2
+
+print('time to check datastream',total)
 
 print('Total number of words in stream = %s'%(num_words,))
 print('Total number of words in set = %s'%(num_words_in_set,))
