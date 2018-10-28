@@ -14,3 +14,11 @@ Part1: Bloom Filter
 
 * Data stream checked against filter and timed.
     * Takes ~ 30 seconds
+    
+Total number of word collsion: 66350
+
+Number of words in Proper.txt: 32657
+
+Number of false positives: 33693
+
+False positive rate: 33693/66350 = 0.508
