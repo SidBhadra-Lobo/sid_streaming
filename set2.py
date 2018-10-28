@@ -117,6 +117,8 @@ print('time to check datastream',total)
 
 print('Total number of words in stream = %s'%(num_words,))
 print('Total number of words in set = %s'%(num_words_in_set,))
+FPR = ((num_words_in_set-32657)/num_words_in_set)
+print('False positive rate:', FPR)
       
 ################### Part 2 ######################
 
