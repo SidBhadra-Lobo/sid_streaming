@@ -8,7 +8,7 @@ def data_stream():
             for w in word_tokenize(line):
                 if w.isalnum():
                     yield w
-   
+
 def bloom_filter_set():
     """Stream the data in 'Proper.txt' """
     with open('Proper.txt', 'r') as f:
@@ -49,10 +49,10 @@ def uhf(p,rng):
 # print(hf)
 
 
-############### 
+###############
 
 ################### Part 1 ######################
-
+print("STARTING PART 1")
 from bitarray import bitarray
 
 import time
@@ -122,9 +122,9 @@ print('Total number of words in stream = %s'%(num_words,))
 print('Total number of words in set = %s'%(num_words_in_set,))
 FPR = ((num_words_in_set-32657)/num_words_in_set)
 print('False positive rate:', FPR)
-      
-################### Part 2 ######################
 
+# ################### Part 2 ######################
+print("STARTING PART 2")
 hash_range = 24 # number of bits in the range of the hash functions
 p = 1000003
 size = 2**24
@@ -176,15 +176,38 @@ print("Averages:", group_estimates)
 print("Estimate of number of distinct elements = %s"%(round(median),))
 
 ################### Part 3 ######################
-
+print("STARTING PART 3")
 var_reservoir = [0]*512
 second_moment = 0
 third_moment = 0
+wordcount = 2059856
 
 # You can use numpy.random's API for maintaining the reservoir of variables
 
-#for word in data_stream(): # Imoplement the AMS algorithm here
-#    pass 
-      
+counter = 0
+
+
+for word in data_stream(): # Imoplement the AMS algorithm here
+   counter += 1
+   if counter % 100000 == 0:
+       print('at word',counter,'in data stream')
+
+   res_samp = np.random.randint(0, 511)
+   l = len(word)
+   word_key = sum([ord(word[c]) * (c + 1) * l for c in range(l)])
+   # var_reservoir[pos] = uhf(p,size)(word_key)
+   pos = uhf(p,size)(word_key)
+   z = 0
+   if pos > z:
+       z = pos
+   var_reservoir[res_samp] = 2**(num_trailing_bits(z))
+
+# print(var_reservoir)
+second_moment = np.var(var_reservoir)
+test_second_moment =  sum(np.power(var_reservoir, 2))/len(var_reservoir)
+print('testing another method for 2nd moment calc:',test_second_moment)
+third_moment = sum(np.power(var_reservoir, 3))/len(var_reservoir)
+
+
 print("Estimate of second moment = %s"%(second_moment,))
 print("Estimate of third moment = %s"%(third_moment,))
