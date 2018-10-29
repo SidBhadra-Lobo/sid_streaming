@@ -120,7 +120,7 @@ print('time to check datastream',total)
 
 print('Total number of words in stream = %s'%(num_words,))
 print('Total number of words in set = %s'%(num_words_in_set,))
-FPR = ((num_words_in_set-32657)/num_words_in_set)
+FPR = (abs(num_words_in_set-32657)/num_words_in_set)
 print('False positive rate:', FPR)
 
 # ################### Part 2 ######################
@@ -186,7 +186,7 @@ wordcount = 2059856
 
 counter = 0
 
-
+t6 = time.time()
 for word in data_stream(): # Imoplement the AMS algorithm here
    counter += 1
    if counter % 100000 == 0:
@@ -203,6 +203,9 @@ for word in data_stream(): # Imoplement the AMS algorithm here
    var_reservoir[res_samp] = 2**(num_trailing_bits(z))
 
 # print(var_reservoir)
+t7 = time.time()
+total = t7 - t6
+print("part3 time:", total)
 second_moment = np.var(var_reservoir)
 test_second_moment =  sum(np.power(var_reservoir, 2))/len(var_reservoir)
 print('testing another method for 2nd moment calc:',test_second_moment)
